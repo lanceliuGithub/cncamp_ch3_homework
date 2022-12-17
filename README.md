@@ -13,17 +13,6 @@ make
 make build
 ```
 
-运行命令
-```
-bin/linux/amd64/myhttpserver
-```
-
-打开方式
-
-- 首页: http://localhost:8888
-- 健康检查页: http://localhost:8888/healthz
-- 缺失的页面: http://localhost:8888/no_such_page
-
 # 制作容器镜像
 
 生成容器镜像
@@ -35,3 +24,19 @@ make release
 ```
 make push
 ```
+
+如果推送时报错 `denied: requested access to the resource is denied` ，请先登录 docker.com
+```
+docker login
+```
+
+# 启动应用（请提前安装好Docker）
+```
+docker run -d -e VERSION=1.0 -p 80:8888 lanceliu2022/myhttpserver:1.0
+```
+
+打开方式
+
+- 首页: http://localhost:8888
+- 健康检查页: http://localhost:8888/healthz
+- 缺失的页面: http://localhost:8888/no_such_page

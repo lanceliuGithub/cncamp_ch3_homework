@@ -14,7 +14,7 @@ func main() {
 	healthzHandler := wrapHandlerWithLogging(http.HandlerFunc(handleHealthz))
 	http.Handle("/healthz", healthzHandler)
 
-	log.Fatal(http.ListenAndServe("127.0.0.1:8888", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8888", nil))
 }
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
