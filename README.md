@@ -31,12 +31,22 @@ docker login
 ```
 
 # 启动应用（请提前安装好Docker）
+
+运行如下命令
 ```
-docker run -d -e VERSION=1.0 -p 80:8888 lanceliu2022/myhttpserver:1.0
+docker run -d --name myhttpserver -e VERSION=1.0 -p 80:8888 lanceliu2022/myhttpserver:1.0
 ```
 
-打开方式
+打开方式（localhost可以更换为任意服务端IP）
 
-- 首页: http://localhost:8888
-- 健康检查页: http://localhost:8888/healthz
-- 缺失的页面: http://localhost:8888/no_such_page
+- 首页: http://localhost
+- 健康检查页: http://localhost/healthz
+- 缺失的页面: http://localhost/no_such_page
+
+# 通过nsenter进入容器
+
+通过 nsenter 进入容器查看 IP 配置
+```
+PID=$(docker inspect --format "{{ .State.Pid }}" myhttpserver)
+nsenter --target $PID --mount --uts --ipc --net --pid ip a && ip r
+```
