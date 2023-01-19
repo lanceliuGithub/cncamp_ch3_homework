@@ -1,6 +1,6 @@
 FROM golang:1.19 AS build
 WORKDIR /go/src/myhttpserver
-COPY myhttpserver.go .
+COPY ["myhttpserver.go", "config.json", "./"]
 
 ENV CGO_ENABLED=0   \
     GO111MODULE=off \
