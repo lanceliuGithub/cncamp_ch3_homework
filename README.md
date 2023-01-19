@@ -1,6 +1,7 @@
 # 项目介绍
 
 本项目用于创建一个实验性质的HTTP服务器，仅可用于学习
+https://github.com/lanceliuGithub/cncamp_ch3_homework.git
 
 # 编译二进制可执行文件
 
@@ -19,6 +20,8 @@ make build
 ```
 make release
 ```
+请注意release动作包括了make，只不过编译动作是在容器中完成的。
+如果只想单独编译出二进制，请使用 make build
 
 生成容器镜像并推送到 Docker Hub 公开仓库
 ```
@@ -36,6 +39,7 @@ docker login
 ```
 docker run -d --name myhttpserver -e VERSION=1.0 -p 80:8888 lanceliu2022/myhttpserver:1.0
 ```
+其中的 VERSION 环境变量可以省略，默认是1.0
 
 打开方式（localhost可以更换为任意服务端IP）
 

@@ -5,10 +5,11 @@ build:
 	mkdir -pv bin/linux/amd64
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/linux/amd64
 
-release: build
+release:
 	echo "Building HTTP Server Container Image"
-	docker build -t lanceliu2022/myhttpserver:${tag} .
+	docker build -t local/myhttpserver:${tag} .
 
 push: release
 	echo "Pushing Local Container Image to Docker Hub"
+	docker tag local/myhttpserver:${tag} lanceliu2022/myhttpserver:${tag}
 	docker push lanceliu2022/myhttpserver:${tag}
