@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -25,12 +26,19 @@ type Log struct {
 	EnableRequestHeader bool `json:"request_header"`
 }
 
+const defaultConfigFile = "config.json"
+
 var myConf *MyConfig
 
 func main() {
+	// Parse Command-Line Flags
+	confFilepathPtr := flag.String("c", defaultConfigFile, "Specify an alternative config file")
+	flag.Parse()
+	confFilepath := *confFilepathPtr
+
 	// Load Config
 	myConf = new(MyConfig)
-	loadConfig("config.json")
+	loadConfig(confFilepath)
 
 	// Register http handlers
 	rootHandler := wrapHandlerWithLogging(http.HandlerFunc(handleRoot))
@@ -72,9 +80,18 @@ func main() {
 }
 
 func loadConfig(confFilename string) {
-	ExecPath, _ := os.Executable()
-	confFilepath := filepath.Dir(ExecPath) + "/" + confFilename
+
+	// Default config file
+	var confFilepath string
+	if confFilename == defaultConfigFile {
+		ExecPath, _ := os.Executable()
+		confFilepath = filepath.Dir(ExecPath) + "/" + confFilename
+	} else {
+		confFilepath = confFilename
+	}
+
 	configFile, err := os.Open(confFilepath)
+
 	if err != nil {
 		log.Fatalf("Config file <%s> NOT found: %v", confFilename, err)
 	}
