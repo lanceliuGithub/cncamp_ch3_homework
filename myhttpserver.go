@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -14,7 +16,30 @@ func main() {
 	healthzHandler := wrapHandlerWithLogging(http.HandlerFunc(handleHealthz))
 	http.Handle("/healthz", healthzHandler)
 
-	log.Fatal(http.ListenAndServe("0.0.0.0:8888", nil))
+	go func() {
+		if err := http.ListenAndServe("0.0.0.0:8888", nil); err != http.ErrServerClosed {
+			log.Fatalf("HTTP server crashed: %v", err)
+		}
+	}()
+
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(
+		signalChan,
+		syscall.SIGHUP,
+		syscall.SIGINT,
+		syscall.SIGQUIT,
+	)
+
+	<-signalChan
+	log.Print("OS Interrupt -- HTTP server shutting down")
+
+	go func() {
+		<-signalChan
+		log.Fatal("OS kill -- Termination")
+	}()
+
+	defer os.Exit(0)
+	return
 }
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
